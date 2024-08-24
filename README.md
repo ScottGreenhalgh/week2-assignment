@@ -103,3 +103,7 @@ That being said, it's hard for me to say if the image loading based off screen r
 As for what went really well, the I think the styling looks perfect, it's exactly how I imagined it to look. There may be a slight gap where the scroll bar sits if you really zoom into the thumbnail container but besides that the styling looks great. All of the buttons work seemlessly too and perfectly sync with each other thanks to my decision to store the index as a local variable.
 
 With a little more work on the dynamically loading images, I probably could perfect it by forcing my window to very specific resolutions, however for the purpose of this project (and after the amount of time spent on that segment) I opted not to. Overall I believe this turned out perfect.
+
+### Important note
+
+Known issue: When running the popular extension https://darkreader.org/ enabled, the page will fail to load the background image (Pathing to the images incorrectly).
