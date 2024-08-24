@@ -16,24 +16,28 @@ With all the images out of the way I initially put together a layout with just h
 
 Once the styling resembled roughly what I was looking for I looked to tackle the javascript, the segment which I knew was the meat of this project. With a plan in mind of exactly what I wanted it to look like, I saved a copy of the HTML element elsewhere and removed it all. From here I took a look at the reference material avaliable on the TechEd GitHub and acknowleged the need for a large array to begin the task. I created an identical array with src: and alt: elements however to prepare for screen size readjustments needed later down the line, I opted to also include my srcset: element at this time too. This took a good while to include all 7 images along with their 4 different resolutions, correctly pathed to the assets folder. Using the TechEd GitHub as a reference again, I saw a function that created the thumbnail element which was extremely useful as a starting block. From here I created two additional functions, which I begain experimenting with. These never made the final cut but I will include them here to show my thought process:
 
-`   function createMainDisplay(imageParam) {`
-`        displayContainer.innerHTML = "";`
-`        const displayImageElement = document.createElement("img");`
-`        displayImageElement.src = imageParam.src;`
-`        displayImageElement.alt = imageParam.alt;`
-`        displayContainer.appendChild(displayImageElement);`
-`   }`
-`
-` function createBackgroundImage(imageParam) {`
-` document.body.style.backgroundImage = "";`
-` document.body.style.backgroundImage = "url('" + imageParam.src + "')";`
-` } `
+```
+   function createMainDisplay(imageParam) {
+        displayContainer.innerHTML = "";
+        const displayImageElement = document.createElement("img");
+        displayImageElement.src = imageParam.src;
+        displayImageElement.alt = imageParam.alt;
+        displayContainer.appendChild(displayImageElement);
+   }
+
+ function createBackgroundImage(imageParam) {
+ document.body.style.backgroundImage = "";
+ document.body.style.backgroundImage = "url('" + imageParam.src + "')";
+ }
+```
 
 After playing around with these functions for a little while, I quickly realised that if I needed to refer to the array index in future, this would need to be a local variable. Therfore I defined `let imageIndex = 0;` This allowed me to also set a default image to the gallery prior to user selection, which would take the src of position 0 in the array. From here I developed a new background image function, under a different name since I still had the other at this time. This also didn't make the cut later, so I will also include this here:
 
-`   function updateBackground() {`
-`       document.body.style.backgroundImage = "url('${images[imageIndex].src}");`
-`   }`
+```
+   function updateBackground() {
+       document.body.style.backgroundImage = "url('${images[imageIndex].src}");
+   }
+```
 
 #### Tab handler
 
@@ -41,10 +45,12 @@ At this point, everything was working as intended, so my attention deviated slig
 
 After this I focused on the tab navigation, where I quickly noticed that pressing tab too many times selected the buttons, and then different elements of the browser itself. To prevent this I looked up the method used to interupt default behvaiour and create my own desired outcome. This was `event.preventDefault();`. From here I had two main problems, I needed to handle. The first was which index I was at when tabbing, and the second was what happens when I reached either end of the index (seeing as Shift + Tab would cycle through in the opposite direction). To overcome this problem I create four new variables:
 
-`   const thumbnails = document.querySelectorAll("img[tabindex='0']");`
-`   const focusedElement = document.activeElement;`
-`   const firstThumbnail = thumbnails[0];`
-`   const lastThumbnail = thumbnails[thumbnails.length - 1];`
+```
+   const thumbnails = document.querySelectorAll("img[tabindex='0']");
+   const focusedElement = document.activeElement;
+   const firstThumbnail = thumbnails[0];
+   const lastThumbnail = thumbnails[thumbnails.length - 1];
+```
 
 With these I had all the information at my disposal and just needed to do some math to ensure everything was tracking the correct index when it needed to be. Using the function `.focus();` I was able to force the loop back to either end when we ventured outside the dataset range.
 
@@ -62,17 +68,19 @@ After getting heavily sidetracked on buttons for a good long while, I decided to
 
 Adding the above component into the mix seemed to handle what I needed, but due to the formatting of my array, some additional changes were needed. I used both `.trim()` and `.split()` to grab only the relevant parts that I needed. While at this point I could've just removed redundant information from the object, I wanted to keep it in the off chance this didn't work exactly the way I intended. Which happened to be exactly what happened. To begin with I attempted to complete this task using the following:
 
-`    function updateBackground() {`
-`        const currentImage = images[imageIndex];`
-`        const srcset = currentImage.srcset`
-`            .split(",")`
-`            .map((src) => {`
-`        const [url, resolution] = src.trim().split(" ");`
-`        return "url('${url}') ${resolution}";`
-`        })`
-`    .join(", ");`
-`    document.body.style.backgroundImage = "-webkit-image-set(${srcset})";`
-`    document.body.style.backgroundImage = "image-set(${srcset})";`
+```
+    function updateBackground() {
+        const currentImage = images[imageIndex];
+        const srcset = currentImage.srcset
+            .split(",")
+            .map((src) => {
+        const [url, resolution] = src.trim().split(" ");
+        return "url('${url}') ${resolution}";
+        })
+    .join(", ");
+    document.body.style.backgroundImage = "-webkit-image-set(${srcset})";
+    document.body.style.backgroundImage = "image-set(${srcset})";
+```
 
 Using the following page as a source: https://dev.to/ingosteinke/responsive-background-images-with-image-set-the-srcset-for-background-image-259a I noticed that the format I was supplying didn't match what was needed the segment handling the resolution wasn't needed here. Instead parameters such as x1 x2 etc. were needed instead. While the conversion of 540p to 144p isn't exactly correct to x4, after some testing it appeared to output a strong result, the images were cycling on zoom.
 
